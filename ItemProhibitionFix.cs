@@ -68,23 +68,16 @@ public class Plugin : BasePlugin
         _prohibitedItems.Clear();
         var probItems = ConVar.Find("mp_items_prohibited")?.StringValue;
 
-        if (probItems == null) return;
+        if (string.IsNullOrWhiteSpace(probItems)) return;
 
-        if (probItems.Contains(","))
+        var items = probItems.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var item in items.Select(i => i.Trim()))
         {
-            var items = probItems.Split(',');
-
-            foreach (var item in items)
+            if (ushort.TryParse(item, out var idx))
             {
-                if (ushort.TryParse(item, out var idx))
-                {
-                    _prohibitedItems.Add(idx);
-                }
+                _prohibitedItems.Add(idx);
             }
-        }
-        else if (ushort.TryParse(probItems, out var idx))
-        {
-            _prohibitedItems.Add(idx);
         }
     }
 }
